@@ -1,6 +1,8 @@
 package com.example.android.reportit;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -8,12 +10,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 /**
  * A placeholder fragment containing a simple view.
  */
 public class MainActivityFragment extends Fragment {
+
+
+    private static final int CAMERA_REQUEST = 1888;
+    private ImageView imageView;
 
     public MainActivityFragment()
     {
@@ -35,6 +42,8 @@ public class MainActivityFragment extends Fragment {
         });
 
         //Camera Button
+
+        /*
         ImageButton cameraButton = (ImageButton)view.findViewById(R.id.imageButton);
         cameraButton.setOnClickListener(new ImageButton.OnClickListener()
         {
@@ -42,6 +51,18 @@ public class MainActivityFragment extends Fragment {
             {
                 Intent cameraIntent = new Intent("android.media.action.IMAGE_CAPTURE");
                 startActivityForResult(cameraIntent,0);
+            }
+        });
+        */
+
+        imageView = (ImageView)view.findViewById(R.id.imageView);
+        ImageButton photoButton = (ImageButton)view.findViewById(R.id.imageButton);
+        photoButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(cameraIntent, CAMERA_REQUEST);
             }
         });
 
@@ -65,19 +86,18 @@ public class MainActivityFragment extends Fragment {
                 {
                     gps.showSettingsAlert();
                 }
-
-                //gps.stopUsingGPS();
             }
-
         });
 
         return view;
-
     }
 
-
-
-
-
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
+            Bitmap photo = (Bitmap) data.getExtras().get("data");
+            imageView.setImageBitmap(photo);
+        }
+    }
 
 }
